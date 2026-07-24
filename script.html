@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пульт Продаж Уфанет v3.0</title>
+    <style>
+        :root {
+            --bg-color: #121214;
+            --card-bg: #1c1c21;
+            --card-border: rgba(255, 255, 255, 0.08);
+            --input-bg: #26262d;
+            --text-main: #f2f2f7;
+            --text-muted: #8e8e93;
+            --accent-blue: #0a84ff;
+            --accent-green: #30d158;
+            --accent-orange: #ff9f0a;
+            --accent-red: #ff453a;
+        }
+
+        * { box-sizing: border-box; }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; 
+            padding: 15px; 
+            background: var(--bg-color); 
+            color: var(--text-main); 
+            max-width: 450px; 
+            margin: 0 auto; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Карточки-блоки */
+        .block { 
+            background: var(--card-bg); 
+            padding: 18px; 
+            border-radius: 16px; 
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); 
+            margin-bottom: 15px; 
+            animation: fadeIn 0.25s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        label { 
+            font-size: 13px; 
+            font-weight: 600; 
+            color: var(--text-muted); 
+            display: block; 
+            margin-bottom: 6px; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .address-grid { display: flex; gap: 10px; }
+        .address-grid .street-box { flex: 2; }
+        .address-grid .apt-box { flex: 1; }
+
+        /* Поля ввода */
+        input { 
+            width: 100%; 
+            padding: 12px 14px; 
+            margin-bottom: 12px; 
+            border: 1px solid var(--card-border); 
+            background: var(--input-bg); 
+            color: #ffffff; 
+            border-radius: 10px; 
+            font-size: 15px; 
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.25);
+        }
+        input::placeholder { color: #5c5c64; }
+
+        /* Кнопки */
+        button { 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%; 
+            padding: 14px; 
+            margin: 8px 0; 
+            border: none; 
+            border-radius: 12px; 
+            background: var(--accent-blue); 
+            color: white; 
+            font-size: 15px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        button:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        button:active { transform: translateY(1px); filter: brightness(0.9); }
+
+        /* Тарифные кнопки */
+        .btn-tariff { 
+            justify-content: space-between; 
+            padding: 12px 16px; 
+            background: #23232a;
+            border: 1px solid var(--card-border);
+        }
+        .tariff-name { font-size: 15px; font-weight: 600; color: #fff; }
+        .tariff-prices { text-align: right; }
+        .old-price { text-decoration: line-through; color: var(--text-muted); font-size: 13px; margin-right: 6px; }
+        .new-price { color: var(--accent-green); font-size: 16px; font-weight: 700; }
+
+        /* Цветовые схемы кнопок */
+        .btn-green { background: linear-gradient(135deg, #30d158, #28b84c); color: #000; font-weight: 700; }
+        .btn-orange { background: linear-gradient(135deg, #ff9f0a, #e08b07); color: #000; font-weight: 700; }
+        .btn-red { background: linear-gradient(135deg, #ff453a, #d7372d); color: #fff; }
+        .btn-grey { background: #2c2c34; color: var(--text-main); border: 1px solid var(--card-border); }
+        .btn-reset { background: rgba(255, 255, 255, 0.05); color: #8e8e93; border: 1px dashed rgba(255, 255, 255, 0.2); }
+        .btn-reset:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+        .btn-back { background: transparent; color: var(--accent-blue); border: 1px solid rgba(10, 132, 255, 0.3); margin-top: 12px; padding: 10px; font-size: 14px; box-shadow: none; }
+        
+        textarea { 
+            width: 100%; 
+            height: 120px; 
+            padding: 12px; 
+            border-radius: 10px; 
+            border: 1px solid var(--card-border); 
+            font-size: 14px; 
+            background: var(--input-bg); 
+            color: #ffffff; 
+            resize: none; 
+            outline: none;
+            font-family: inherit;
+        }
+
+        .hidden { display: none !important; }
+
+        .step-title { 
+            font-size: 13px; 
+            font-weight: 700; 
+            margin-bottom: 14px; 
+            text-align: center; 
+            background: rgba(255, 255, 255, 0.04); 
+            color: var(--text-muted); 
+            padding: 8px 12px; 
+            border-radius: 8px; 
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        /* История */
+        .history-header { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); color: var(--text-main); padding: 12px 15px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid var(--card-border); }
+        .history-list { max-height: 220px; overflow-y: auto; font-size: 12px; color: #d1d1d6; background: var(--input-bg); padding: 12px; border-radius: 10px; border: 1px solid var(--card-border); white-space: pre-wrap; margin-top: 10px; margin-bottom: 10px; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+    <button onclick="resetAll()" class="btn-reset">🔄 СБРОСИТЬ / НОВАЯ ЗАЯВКА</button>
+
+    <!-- ВВОД ДАННЫХ КЛИЕНТА -->
+    <div id="client_info_block" class="block">
+        <div class="address-grid">
+            <div class="street-box">
+                <label>Улица и дом</label>
+                <input type="text" id="client_street" placeholder="ул. Ленина, д. 10">
+            </div>
+            <div class="apt-box">
+                <label>Квартира</label>
+                <input type="text" id="client_apt" placeholder="5">
+            </div>
+        </div>
+        <label>Телефон клиента</label>
+        <input type="text" id="client_phone" placeholder="+7 (999) 000-00-00">
+    </div>
+
+    <!-- ШАГ 1: Старт звонка -->
+    <div id="step1" class="block">
+        <div class="step-title">Результат контакта</div>
+        <button onclick="goStep('step1', 'step2_yes')" class="btn-green">🚀 Согласен на подключение</button>
+        <button onclick="goStep('step1', 'step2_think')" class="btn-orange">💬 Подумает</button>
+        <button onclick="goStep('step1', 'step2_no')" class="btn-red">❌ Отказ от услуг</button>
+    </div>
+
+    <!-- ШАГ 2 (Да): Тарифы Уфанет -->
+    <div id="step2_yes" class="block hidden">
+        <div class="step-title">Выберите тариф</div>
+        
+        <button class="btn-tariff" onclick="setTariff('Тариф 200')">
+            <span class="tariff-name">Тариф 200</span>
+            <span class="tariff-prices"><span class="old-price">690 ₽</span><span class="new-price">345 ₽</span></span>
+        </button>
+
+        <button class="btn-tariff" onclick="setTariff('Тариф 600')">
+            <span class="tariff-name">Тариф 600</span>
+            <span class="tariff-prices"><span class="old-price">775 ₽</span><span class="new-price">387,5 ₽</span></span>
+        </button>
+
+        <button class="btn-tariff" onclick="setTariff('Тариф 777')">
+            <span class="tariff-name">Тариф 777</span>
+            <span class="tariff-prices"><span class="old-price">925 ₽</span><span class="new-price">462,5 ₽</span></span>
+        </button>
+
+        <button class="btn-tariff" onclick="setTariff('Тариф 2000')">
+            <span class="tariff-name">Тариф 2000</span>
+            <span class="tariff-prices"><span class="old-price">2000 ₽</span><span class="new-price">1000 ₽</span></span>
+        </button>
+
+        <button onclick="goStep('step2_yes', 'step1')" class="btn-back">← Назад</button>
+    </div>
+
+    <!-- ШАГ 3 (Да): Оборудование -->
+    <div id="step3_router" class="block hidden">
+        <div class="step-title">Выбор оборудования</div>
+        <button class="btn-grey" onclick="setRouter('ONT + Wi-Fi')">📡 ONT + Wi-Fi (100 ₽/мес)</button>
+        <button class="btn-grey" onclick="setRouter('Sber Box')">📺 Приставка Sber Box (150 ₽/мес)</button>
+        <button class="btn-grey" onclick="setRouter('Комплект: ONT + Sber Box')">📦 Комплект (ONT + Sber Box)</button>
+        <button class="btn-grey" onclick="setRouter('Своё оборудование')">⚙️ Своё оборудование</button>
+        <button onclick="goStep('step3_router', 'step2_yes')" class="btn-back">← Назад</button>
+    </div>
+
+    <!-- ШАГ 2 (Подумает): Комментарий -->
+    <div id="step2_think" class="block hidden">
+        <div class="step-title">Комментарий к перезвону</div>
+        <label>Детали / когда набрать</label>
+        <input type="text" id="think_comment" placeholder="Например: Перезвонить завтра после 18:00">
+        <button onclick="saveThink()" class="btn-orange">💾 Сохранить запись</button>
+        <button onclick="goStep('step2_think', 'step1')" class="btn-back">← Назад</button>
+    </div>
+
+    <!-- ШАГ 2 (Нет): Причина отказа -->
+    <div id="step2_no" class="block hidden">
+        <div class="step-title">Причина отказа</div>
+        <button onclick="setRefusal('Дорого')" class="btn-red">💸 Дорого</button>
+        <button onclick="setRefusal('Устраивает текущий провайдер')" class="btn-red">👍 Устраивает текущий</button>
+        <button onclick="goStep('step2_no', 'step2_no_review')" class="btn-red">👎 Плохой отзыв / негатив</button>
+        <button onclick="goStep('step2_no', 'step1')" class="btn-back">← Назад</button>
+    </div>
+
+    <!-- ШАГ 2.1 (Нет): Комментарий к отзыву -->
+    <div id="step2_no_review" class="block hidden">
+        <div class="step-title">Детали отзыва</div>
+        <label>Что не понравилось клиенту?</label>
+        <input type="text" id="review_comment" placeholder="Например: Сосед жаловался на обрывы">
+        <button onclick="saveReviewRefusal()" class="btn-red">💾 Сохранить отказ</button>
+        <button onclick="goStep('step2_no_review', 'step2_no')" class="btn-back">← Назад</button>
+    </div>
+
+    <!-- ФИНАЛЬНЫЙ ЭКРАН -->
+    <div id="final_block" class="block hidden">
+        <div class="step-title" style="background: rgba(48, 209, 88, 0.15); color: var(--accent-green);">Готовый текст заявки</div>
+        <textarea id="result_text" readonly></textarea>
+        <button id="copy_btn" onclick="copyText()" class="btn-green">📋 СКОПИРОВАТЬ В БУФЕР</button>
+    </div>
+
+    <!-- ИСТОРИЯ ЗАЯВОК -->
+    <div class="block" id="history_block">
+        <div class="history-header" onclick="toggleHistory()">
+            <span id="history_title">🕒 ИСТОРИЯ ЗА СМЕНУ (0)</span>
+            <span id="history_arrow">▼</span>
+        </div>
+        
+        <div id="history_body" class="hidden">
+            <div id="history_list" class="history-list">Заявок пока нет...</div>
+            <button onclick="copyHistory()" class="btn-grey" style="font-size: 13px; padding: 10px;">📋 Скопировать всю историю</button>
+            <button onclick="clearHistory()" class="btn-back" style="color: var(--accent-red); border-color: rgba(255, 69, 58, 0.3);">🗑️ Очистить историю</button>
+        </div>
+    </div>
+
+    <script>
+        let resultData = { status: '', tariff: '', router: '', reason: '', thinkComment: '' };
+        let historyArray = [];
+
+        function goStep(fromId, toId) {
+            document.getElementById(fromId).classList.add('hidden');
+            document.getElementById(toId).classList.remove('hidden');
+        }
+
+        function setTariff(val) {
+            resultData.status = 'Согласен';
+            resultData.tariff = val;
+            goStep('step2_yes', 'step3_router');
+        }
+
+        function setRouter(val) {
+            resultData.router = val;
+            document.getElementById('step3_router').classList.add('hidden');
+            showFinal();
+        }
+
+        function saveThink() {
+            let comm = document.getElementById('think_comment').value.trim() || 'Без комментария';
+            resultData.status = 'Подумает';
+            resultData.thinkComment = comm;
+            document.getElementById('step2_think').classList.add('hidden');
+            showFinal();
+        }
+
+        function setRefusal(val) {
+            resultData.status = 'Отказ';
+            resultData.reason = val;
+            document.getElementById('step2_no').classList.add('hidden');
+            showFinal();
+        }
+
+        function saveReviewRefusal() {
+            let comm = document.getElementById('review_comment').value.trim() || 'Без уточнения';
+            resultData.status = 'Отказ';
+            resultData.reason = `Плохой отзыв (${comm})`;
+            document.getElementById('step2_no_review').classList.add('hidden');
+            showFinal();
+        }
+
+        function showFinal() {
+            let street = document.getElementById('client_street').value.trim();
+            let apt = document.getElementById('client_apt').value.trim();
+            
+            let address = street || 'Не указан';
+            if (apt) { address += `, кв. ${apt}`; }
+
+            let phone = document.getElementById('client_phone').value.trim() || 'Не указан';
+            let finalOutput = '';
+
+            if (resultData.status === 'Согласен') {
+                finalOutput = `ЗАЯВКА УФАНЕТ\nАдрес: ${address}\nТел: ${phone}\nТариф: ${resultData.tariff}\nОборудование: ${resultData.router}`;
+            } else if (resultData.status === 'Подумает') {
+                finalOutput = `НАПОМИНАНИЕ: КЛИЕНТ ДУМАЕТ\nАдрес: ${address}\nТел: ${phone}\nСтатус: Подумает\nКоммент: ${resultData.thinkComment}`;
+            } else {
+                finalOutput = `ОТЧЕТ ОБ ОТКАЗЕ\nАдрес: ${address}\nТел: ${phone}\nСтатус: Отказ\nПричина: ${resultData.reason}`;
+            }
+
+            document.getElementById('result_text').value = finalOutput;
+            document.getElementById('final_block').classList.remove('hidden');
+
+            addToHistory(finalOutput);
+        }
+
+        function addToHistory(text) {
+            let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            historyArray.unshift(`[${time}]\n${text}\n-------------------`);
+            renderHistory();
+        }
+
+        function renderHistory() {
+            let container = document.getElementById('history_list');
+            document.getElementById('history_title').innerText = `🕒 ИСТОРИЯ ЗА СМЕНУ (${historyArray.length})`;
+            
+            if (historyArray.length === 0) {
+                container.innerText = 'Заявок пока нет...';
+            } else {
+                container.innerText = historyArray.join('\n\n');
+            }
+        }
+
+        function toggleHistory() {
+            let body = document.getElementById('history_body');
+            let arrow = document.getElementById('history_arrow');
+            
+            if (body.classList.contains('hidden')) {
+                body.classList.remove('hidden');
+                arrow.innerText = '▲';
+                document.getElementById('history_block').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                body.classList.add('hidden');
+                arrow.innerText = '▼';
+            }
+        }
+
+        function copyHistory() {
+            if (historyArray.length === 0) {
+                alert('История пуста!');
+                return;
+            }
+            navigator.clipboard.writeText(historyArray.join('\n\n'));
+            alert('Вся история за смену скопирована в буфер обмена!');
+        }
+
+        function clearHistory() {
+            if (confirm('Очистить всю историю заявок?')) {
+                historyArray = [];
+                renderHistory();
+            }
+        }
+
+        function copyText() {
+            let txt = document.getElementById('result_text');
+            txt.select();
+            txt.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(txt.value);
+            
+            let btn = document.getElementById('copy_btn');
+            let originalText = btn.innerText;
+            btn.innerText = '✅ СКОПИРОВАНО!';
+            setTimeout(() => { btn.innerText = originalText; }, 2000);
+        }
+
+        function resetAll() {
+            resultData = { status: '', tariff: '', router: '', reason: '', thinkComment: '' };
+            
+            const steps = ['step2_yes', 'step3_router', 'step2_think', 'step2_no', 'step2_no_review', 'final_block'];
+            steps.forEach(id => document.getElementById(id).classList.add('hidden'));
+            
+            document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('client_info_block').classList.remove('hidden');
+            
+            document.getElementById('client_apt').value = '';
+            document.getElementById('client_phone').value = '';
+            document.getElementById('think_comment').value = '';
+            document.getElementById('review_comment').value = '';
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
