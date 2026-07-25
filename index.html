@@ -207,6 +207,18 @@
         }
         button:hover { filter: brightness(1.1); transform: translateY(-1px); }
         button:active { transform: translateY(1px); filter: brightness(0.9); }
+
+        /* Контейнер для кнопок в ряд */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .action-buttons button {
+            flex: 1;
+            margin: 8px 0 0 0;
+            font-size: 14px;
+            padding: 12px 8px;
+        }
  
         /* Тарифные кнопки */
         .btn-tariff { 
@@ -371,7 +383,12 @@
         <div id="final_block" class="block hidden">
             <div class="step-title" style="background: rgba(48, 209, 88, 0.15); color: var(--accent-green);">Готовый текст заявки</div>
             <textarea id="result_text" readonly></textarea>
-            <button id="copy_btn" onclick="copyText()" class="btn-green">📋 СКОПИРОВАТЬ В БУФЕР</button>
+            
+            <!-- Две кнопки: Копировать и Отправить в ряд -->
+            <div class="action-buttons">
+                <button id="copy_btn" onclick="copyText()" class="btn-grey">📋 Скопировать</button>
+                <button id="send_btn" onclick="manualSend()" class="btn-green">🚀 Отправить</button>
+            </div>
         </div>
  
         <!-- ИСТОРИЯ ЗАЯВОК -->
@@ -391,8 +408,7 @@
     </div>
  
     <script>
-        // Ссылка на ваш Google Apps Script Web App
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwyyNBLucz48gjCt1BwW6O50cBeEAsvTvKiKxHqRQavOmy6I52pFlX6ctu6H-5Ptru8/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxLc9KzfHmwrJnFdUHn-8xy7U7-iWF1w_u0EsSW1KqRToHbxRL6eM50iCshN6fjE8B0/exec";
 
         let resultData = { status: '', tariff: '', router: '', reason: '', thinkComment: '' };
         let historyArray = [];
@@ -458,33 +474,53 @@
             document.getElementById('result_text').value = finalOutput;
             document.getElementById('final_block').classList.remove('hidden');
  
-            // 🌐 Автоматическая отправка в Google Таблицу
-            sendToGoogleSheet({
-                timestamp: new Date().toLocaleString(),
-                address: address,
-                phone: phone,
-                status: resultData.status,
-                tariff: resultData.tariff || '-',
-                router: resultData.router || '-',
-                details: resultData.thinkComment || resultData.reason || '-'
-            });
+            let sendBtn = document.getElementById('send_btn');
+            sendBtn.innerText = '🚀 Отправить';
+            sendBtn.style.background = '';
 
             addToHistory(finalOutput);
         }
 
-        // Функция отправки данных через fetch (CORS mode: 'no-cors' или обычный, если настроен Apps Script)
-        function sendToGoogleSheet(data) {
+        // Ручная отправка: строго в колонки Дата, Адрес, Результат, Комментарий, Номер
+        function manualSend() {
+            let street = document.getElementById('client_street').value.trim();
+            let apt = document.getElementById('client_apt').value.trim();
+            let address = street || 'Не указан';
+            if (apt) { address += `, кв. ${apt}`; }
+            let phone = document.getElementById('client_phone').value.trim() || 'Не указан';
+
+            let commentInfo = '-';
+            if (resultData.status === 'Согласен') {
+                commentInfo = `Тариф: ${resultData.tariff} | Оборудование: ${resultData.router}`;
+            } else if (resultData.status === 'Подумает') {
+                commentInfo = `Перезвон: ${resultData.thinkComment}`;
+            } else if (resultData.status === 'Отказ') {
+                commentInfo = `Причина: ${resultData.reason}`;
+            }
+
+            let sendBtn = document.getElementById('send_btn');
+            sendBtn.innerText = '⏳ Отправка...';
+
             fetch(WEB_APP_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Важно для обхода CORS-политик Google Apps Script при отправке со сторонних хостингов
+                mode: 'no-cors',
                 cache: 'no-cache',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    timestamp: new Date().toLocaleString(),
+                    address: address,
+                    status: resultData.status,
+                    details: commentInfo,
+                    phone: phone
+                })
             }).catch(error => {
-                console.error('Ошибка отправки в таблицу:', error);
+                console.error('Ошибка отправки:', error);
             });
+
+            setTimeout(() => {
+                sendBtn.innerText = '✅ ОТПРАВЛЕНО!';
+                sendBtn.style.background = '#28b84c';
+            }, 600);
         }
  
         function addToHistory(text) {
@@ -542,7 +578,7 @@
             
             let btn = document.getElementById('copy_btn');
             let originalText = btn.innerText;
-            btn.innerText = '✅ СКОПИРОВАНО!';
+            btn.innerText = '✅ Скопировано!';
             setTimeout(() => { btn.innerText = originalText; }, 2000);
         }
  
@@ -555,11 +591,14 @@
             document.getElementById('step1').classList.remove('hidden');
             document.getElementById('client_info_block').classList.remove('hidden');
             
-            document.getElementById('client_street').value = '';
+            // Улица (street) НЕ очищается, чтобы сохранять адрес текущего дома
             document.getElementById('client_apt').value = '';
             document.getElementById('client_phone').value = '';
             document.getElementById('think_comment').value = '';
             document.getElementById('review_comment').value = '';
+            
+            // Фокус переносится на квартиру для быстрого ввода следующего клиента
+            document.getElementById('client_apt').focus();
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
