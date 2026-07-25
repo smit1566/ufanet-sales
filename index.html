@@ -20,9 +20,9 @@
             --accent-orange: #ff9f0a;
             --accent-red: #ff453a;
         }
-
+ 
         * { box-sizing: border-box; }
-
+ 
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; 
             padding: 40px 15px 15px 15px; 
@@ -35,7 +35,7 @@
             min-height: 100vh;
             overflow-x: hidden;
         }
-
+ 
         /* 🎬 АНИМАЦИЯ ЛОГОТИПА УФАНЕТ */
         .intro-logo-overlay {
             position: fixed;
@@ -54,7 +54,7 @@
             box-shadow: 0 0 50px rgba(255, 125, 0, 0.5);
             animation: introLogo 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-
+ 
         .intro-logo-overlay .wifi-icon {
             width: 80px;
             height: 80px;
@@ -66,7 +66,7 @@
             margin-bottom: 10px;
             position: relative;
         }
-
+ 
         .intro-logo-overlay .wifi-icon::after {
             content: '';
             position: absolute;
@@ -79,7 +79,7 @@
             border-right: none;
             border-radius: 100px 0 0 0;
         }
-
+ 
         .intro-logo-overlay .logo-text {
             font-size: 38px;
             font-weight: 900;
@@ -87,7 +87,7 @@
             letter-spacing: -1px;
             margin-top: -10px;
         }
-
+ 
         @keyframes introLogo {
             0% {
                 transform: translate(-50%, -50%) scale(0.3);
@@ -103,11 +103,11 @@
             }
             100% {
                 transform: translate(-50%, -50%) scale(1);
-                opacity: 0.12; /* Уходит в тусклый фоновый знак */
+                opacity: 0.12;
                 z-index: 0;
             }
         }
-
+ 
         /* 🎭 Анимация проявления интерфейса */
         .app-content {
             opacity: 0;
@@ -116,14 +116,14 @@
             position: relative;
             z-index: 10;
         }
-
+ 
         @keyframes fadeInContent {
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-
+ 
         /* ✍️ Подпись автора */
         .author-signature {
             position: absolute;
@@ -136,7 +136,7 @@
             letter-spacing: 0.3px;
             z-index: 20;
         }
-
+ 
         /* Карточки-блоки */
         .block { 
             background: var(--card-bg); 
@@ -150,7 +150,7 @@
             position: relative;
             z-index: 1;
         }
-
+ 
         label { 
             font-size: 13px; 
             font-weight: 600; 
@@ -164,7 +164,7 @@
         .address-grid { display: flex; gap: 10px; }
         .address-grid .street-box { flex: 2; }
         .address-grid .apt-box { flex: 1; }
-
+ 
         /* Поля ввода */
         input { 
             width: 100%; 
@@ -183,7 +183,7 @@
             box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.25);
         }
         input::placeholder { color: #5c5c64; }
-
+ 
         /* Кнопки */
         button { 
             display: flex;
@@ -207,7 +207,7 @@
         }
         button:hover { filter: brightness(1.1); transform: translateY(-1px); }
         button:active { transform: translateY(1px); filter: brightness(0.9); }
-
+ 
         /* Тарифные кнопки */
         .btn-tariff { 
             justify-content: space-between; 
@@ -219,7 +219,7 @@
         .tariff-prices { text-align: right; }
         .old-price { text-decoration: line-through; color: var(--text-muted); font-size: 13px; margin-right: 6px; }
         .new-price { color: var(--accent-green); font-size: 16px; font-weight: 700; }
-
+ 
         /* Цветовые схемы кнопок */
         .btn-green { background: linear-gradient(135deg, #30d158, #28b84c); color: #000; font-weight: 700; }
         .btn-orange { background: linear-gradient(135deg, #ff9f0a, #e08b07); color: #000; font-weight: 700; }
@@ -242,9 +242,9 @@
             outline: none;
             font-family: inherit;
         }
-
+ 
         .hidden { display: none !important; }
-
+ 
         .step-title { 
             font-size: 13px; 
             font-weight: 700; 
@@ -264,21 +264,21 @@
     </style>
 </head>
 <body>
-
-    <!-- 🎬 БЛОК АНИМАЦИИ (Вылетает сразу при открытии) -->
+ 
+    <!-- 🎬 БЛОК АНИМАЦИИ -->
     <div class="intro-logo-overlay">
         <div class="wifi-icon"></div>
         <div class="logo-text">уфанет</div>
     </div>
-
+ 
     <!-- ✍️ Подпись в правом верхнем углу -->
     <div class="author-signature">сделал Семур Гусейнов</div>
-
+ 
     <!-- ОБОЛОЧКА ИНТЕРФЕЙСА -->
     <div class="app-content">
-
+ 
         <button onclick="resetAll()" class="btn-reset">🔄 СБРОСИТЬ / НОВАЯ ЗАЯВКА</button>
-
+ 
         <!-- ВВОД ДАННЫХ КЛИЕНТА -->
         <div id="client_info_block" class="block">
             <div class="address-grid">
@@ -294,7 +294,7 @@
             <label>Телефон клиента</label>
             <input type="text" id="client_phone" placeholder="+7 (999) 000-00-00">
         </div>
-
+ 
         <!-- ШАГ 1: Старт звонка -->
         <div id="step1" class="block">
             <div class="step-title">Результат контакта</div>
@@ -302,7 +302,7 @@
             <button onclick="goStep('step1', 'step2_think')" class="btn-orange">💬 Подумает</button>
             <button onclick="goStep('step1', 'step2_no')" class="btn-red">❌ Отказ от услуг</button>
         </div>
-
+ 
         <!-- ШАГ 2 (Да): Тарифы Уфанет -->
         <div id="step2_yes" class="block hidden">
             <div class="step-title">Выберите тариф</div>
@@ -311,25 +311,25 @@
                 <span class="tariff-name">Тариф 200</span>
                 <span class="tariff-prices"><span class="old-price">690 ₽</span><span class="new-price">345 ₽</span></span>
             </button>
-
+ 
             <button class="btn-tariff" onclick="setTariff('Тариф 600')">
                 <span class="tariff-name">Тариф 600</span>
                 <span class="tariff-prices"><span class="old-price">775 ₽</span><span class="new-price">387,5 ₽</span></span>
             </button>
-
+ 
             <button class="btn-tariff" onclick="setTariff('Тариф 777')">
                 <span class="tariff-name">Тариф 777</span>
                 <span class="tariff-prices"><span class="old-price">925 ₽</span><span class="new-price">462,5 ₽</span></span>
             </button>
-
+ 
             <button class="btn-tariff" onclick="setTariff('Тариф 2000')">
                 <span class="tariff-name">Тариф 2000</span>
                 <span class="tariff-prices"><span class="old-price">2000 ₽</span><span class="new-price">1000 ₽</span></span>
             </button>
-
+ 
             <button onclick="goStep('step2_yes', 'step1')" class="btn-back">← Назад</button>
         </div>
-
+ 
         <!-- ШАГ 3 (Да): Оборудование -->
         <div id="step3_router" class="block hidden">
             <div class="step-title">Выбор оборудования</div>
@@ -339,7 +339,7 @@
             <button class="btn-grey" onclick="setRouter('Своё оборудование')">⚙️ Своё оборудование</button>
             <button onclick="goStep('step3_router', 'step2_yes')" class="btn-back">← Назад</button>
         </div>
-
+ 
         <!-- ШАГ 2 (Подумает): Комментарий -->
         <div id="step2_think" class="block hidden">
             <div class="step-title">Комментарий к перезвону</div>
@@ -348,7 +348,7 @@
             <button onclick="saveThink()" class="btn-orange">💾 Сохранить запись</button>
             <button onclick="goStep('step2_think', 'step1')" class="btn-back">← Назад</button>
         </div>
-
+ 
         <!-- ШАГ 2 (Нет): Причина отказа -->
         <div id="step2_no" class="block hidden">
             <div class="step-title">Причина отказа</div>
@@ -357,7 +357,7 @@
             <button onclick="goStep('step2_no', 'step2_no_review')" class="btn-red">👎 Плохой отзыв / негатив</button>
             <button onclick="goStep('step2_no', 'step1')" class="btn-back">← Назад</button>
         </div>
-
+ 
         <!-- ШАГ 2.1 (Нет): Комментарий к отзыву -->
         <div id="step2_no_review" class="block hidden">
             <div class="step-title">Детали отзыва</div>
@@ -366,14 +366,14 @@
             <button onclick="saveReviewRefusal()" class="btn-red">💾 Сохранить отказ</button>
             <button onclick="goStep('step2_no_review', 'step2_no')" class="btn-back">← Назад</button>
         </div>
-
+ 
         <!-- ФИНАЛЬНЫЙ ЭКРАН -->
         <div id="final_block" class="block hidden">
             <div class="step-title" style="background: rgba(48, 209, 88, 0.15); color: var(--accent-green);">Готовый текст заявки</div>
             <textarea id="result_text" readonly></textarea>
             <button id="copy_btn" onclick="copyText()" class="btn-green">📋 СКОПИРОВАТЬ В БУФЕР</button>
         </div>
-
+ 
         <!-- ИСТОРИЯ ЗАЯВОК -->
         <div class="block" id="history_block">
             <div class="history-header" onclick="toggleHistory()">
@@ -387,30 +387,33 @@
                 <button onclick="clearHistory()" class="btn-back" style="color: var(--accent-red); border-color: rgba(255, 69, 58, 0.3);">🗑️ Очистить историю</button>
             </div>
         </div>
-
+ 
     </div>
-
+ 
     <script>
+        // Ссылка на ваш Google Apps Script Web App
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwyyNBLucz48gjCt1BwW6O50cBeEAsvTvKiKxHqRQavOmy6I52pFlX6ctu6H-5Ptru8/exec";
+
         let resultData = { status: '', tariff: '', router: '', reason: '', thinkComment: '' };
         let historyArray = [];
-
+ 
         function goStep(fromId, toId) {
             document.getElementById(fromId).classList.add('hidden');
             document.getElementById(toId).classList.remove('hidden');
         }
-
+ 
         function setTariff(val) {
             resultData.status = 'Согласен';
             resultData.tariff = val;
             goStep('step2_yes', 'step3_router');
         }
-
+ 
         function setRouter(val) {
             resultData.router = val;
             document.getElementById('step3_router').classList.add('hidden');
             showFinal();
         }
-
+ 
         function saveThink() {
             let comm = document.getElementById('think_comment').value.trim() || 'Без комментария';
             resultData.status = 'Подумает';
@@ -418,14 +421,14 @@
             document.getElementById('step2_think').classList.add('hidden');
             showFinal();
         }
-
+ 
         function setRefusal(val) {
             resultData.status = 'Отказ';
             resultData.reason = val;
             document.getElementById('step2_no').classList.add('hidden');
             showFinal();
         }
-
+ 
         function saveReviewRefusal() {
             let comm = document.getElementById('review_comment').value.trim() || 'Без уточнения';
             resultData.status = 'Отказ';
@@ -433,17 +436,17 @@
             document.getElementById('step2_no_review').classList.add('hidden');
             showFinal();
         }
-
+ 
         function showFinal() {
             let street = document.getElementById('client_street').value.trim();
             let apt = document.getElementById('client_apt').value.trim();
             
             let address = street || 'Не указан';
             if (apt) { address += `, кв. ${apt}`; }
-
+ 
             let phone = document.getElementById('client_phone').value.trim() || 'Не указан';
             let finalOutput = '';
-
+ 
             if (resultData.status === 'Согласен') {
                 finalOutput = `ЗАЯВКА УФАНЕТ\nАдрес: ${address}\nТел: ${phone}\nТариф: ${resultData.tariff}\nОборудование: ${resultData.router}`;
             } else if (resultData.status === 'Подумает') {
@@ -451,19 +454,45 @@
             } else {
                 finalOutput = `ОТЧЕТ ОБ ОТКАЗЕ\nАдрес: ${address}\nТел: ${phone}\nСтатус: Отказ\nПричина: ${resultData.reason}`;
             }
-
+ 
             document.getElementById('result_text').value = finalOutput;
             document.getElementById('final_block').classList.remove('hidden');
+ 
+            // 🌐 Автоматическая отправка в Google Таблицу
+            sendToGoogleSheet({
+                timestamp: new Date().toLocaleString(),
+                address: address,
+                phone: phone,
+                status: resultData.status,
+                tariff: resultData.tariff || '-',
+                router: resultData.router || '-',
+                details: resultData.thinkComment || resultData.reason || '-'
+            });
 
             addToHistory(finalOutput);
         }
 
+        // Функция отправки данных через fetch (CORS mode: 'no-cors' или обычный, если настроен Apps Script)
+        function sendToGoogleSheet(data) {
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Важно для обхода CORS-политик Google Apps Script при отправке со сторонних хостингов
+                cache: 'no-cache',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).catch(error => {
+                console.error('Ошибка отправки в таблицу:', error);
+            });
+        }
+ 
         function addToHistory(text) {
             let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             historyArray.unshift(`[${time}]\n${text}\n-------------------`);
             renderHistory();
         }
-
+ 
         function renderHistory() {
             let container = document.getElementById('history_list');
             document.getElementById('history_title').innerText = `🕒 ИСТОРИЯ ЗА СМЕНУ (${historyArray.length})`;
@@ -474,7 +503,7 @@
                 container.innerText = historyArray.join('\n\n');
             }
         }
-
+ 
         function toggleHistory() {
             let body = document.getElementById('history_body');
             let arrow = document.getElementById('history_arrow');
@@ -488,7 +517,7 @@
                 arrow.innerText = '▼';
             }
         }
-
+ 
         function copyHistory() {
             if (historyArray.length === 0) {
                 alert('История пуста!');
@@ -497,14 +526,14 @@
             navigator.clipboard.writeText(historyArray.join('\n\n'));
             alert('Вся история за смену скопирована в буфер обмена!');
         }
-
+ 
         function clearHistory() {
             if (confirm('Очистить всю историю заявок?')) {
                 historyArray = [];
                 renderHistory();
             }
         }
-
+ 
         function copyText() {
             let txt = document.getElementById('result_text');
             txt.select();
@@ -516,7 +545,7 @@
             btn.innerText = '✅ СКОПИРОВАНО!';
             setTimeout(() => { btn.innerText = originalText; }, 2000);
         }
-
+ 
         function resetAll() {
             resultData = { status: '', tariff: '', router: '', reason: '', thinkComment: '' };
             
@@ -526,6 +555,7 @@
             document.getElementById('step1').classList.remove('hidden');
             document.getElementById('client_info_block').classList.remove('hidden');
             
+            document.getElementById('client_street').value = '';
             document.getElementById('client_apt').value = '';
             document.getElementById('client_phone').value = '';
             document.getElementById('think_comment').value = '';
