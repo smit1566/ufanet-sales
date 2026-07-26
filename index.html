@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Пульт Продаж Уфанет v3.0</title>
+    <title>Пульт Продаж Уфанет v3.3</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Уфанет Пульт">
@@ -89,23 +89,10 @@
         }
  
         @keyframes introLogo {
-            0% {
-                transform: translate(-50%, -50%) scale(0.3);
-                opacity: 0;
-            }
-            35% {
-                transform: translate(-50%, -50%) scale(1.05);
-                opacity: 1;
-            }
-            60% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.12;
-                z-index: 0;
-            }
+            0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+            35% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+            60% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0.12; z-index: 0; }
         }
  
         /* 🎭 Анимация проявления интерфейса */
@@ -118,24 +105,46 @@
         }
  
         @keyframes fadeInContent {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            to { opacity: 1; transform: translateY(0); }
         }
  
-        /* ✍️ Подпись автора */
-        .author-signature {
+        /* Верхняя панель (автор + шестеренка) */
+        .top-bar {
             position: absolute;
             top: 12px;
             right: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 20;
+        }
+ 
+        .author-signature {
             font-size: 11px;
             font-weight: 500;
             color: var(--text-muted);
             opacity: 0.85;
             letter-spacing: 0.3px;
-            z-index: 20;
         }
+
+        .settings-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            margin: 0;
+            box-shadow: none;
+            transition: background 0.2s;
+        }
+        .settings-btn:hover { background: rgba(255, 255, 255, 0.2); }
  
         /* Карточки-блоки */
         .block { 
@@ -207,18 +216,9 @@
         }
         button:hover { filter: brightness(1.1); transform: translateY(-1px); }
         button:active { transform: translateY(1px); filter: brightness(0.9); }
-
-        /* Контейнер для кнопок в ряд */
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        .action-buttons button {
-            flex: 1;
-            margin: 8px 0 0 0;
-            font-size: 14px;
-            padding: 12px 8px;
-        }
+ 
+        .action-buttons { display: flex; gap: 10px; }
+        .action-buttons button { flex: 1; margin: 8px 0 0 0; font-size: 14px; padding: 12px 8px; }
  
         /* Тарифные кнопки */
         .btn-tariff { 
@@ -270,6 +270,40 @@
             text-transform: uppercase;
         }
         
+        /* Drag-and-Drop список колонок */
+        .column-order-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .order-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: grab;
+            user-select: none;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .order-item:active { cursor: grabbing; }
+        .order-item.dragging {
+            opacity: 0.4;
+            background: #1a1a1e;
+            border: 1px dashed var(--accent-blue);
+        }
+        .order-item::after {
+            content: '≡';
+            color: var(--text-muted);
+            font-size: 18px;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+ 
         /* История */
         .history-header { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); color: var(--text-main); padding: 12px 15px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid var(--card-border); }
         .history-list { max-height: 220px; overflow-y: auto; font-size: 12px; color: #d1d1d6; background: var(--input-bg); padding: 12px; border-radius: 10px; border: 1px solid var(--card-border); white-space: pre-wrap; margin-top: 10px; margin-bottom: 10px; line-height: 1.4; }
@@ -277,21 +311,33 @@
 </head>
 <body>
  
-    <!-- 🎬 БЛОК АНИМАЦИИ -->
     <div class="intro-logo-overlay">
         <div class="wifi-icon"></div>
         <div class="logo-text">уфанет</div>
     </div>
  
-    <!-- ✍️ Подпись в правом верхнем углу -->
-    <div class="author-signature">сделал Семур Гусейнов</div>
+    <div class="top-bar">
+        <div class="author-signature">сделал Семур Гусейнов</div>
+        <button class="settings-btn" onclick="toggleSettings()" title="Настройки">⚙️</button>
+    </div>
  
-    <!-- ОБОЛОЧКА ИНТЕРФЕЙСА -->
     <div class="app-content">
  
+        <div id="settings_block" class="block hidden" style="border: 1px solid var(--accent-blue);">
+            <div class="step-title" style="background: rgba(10, 132, 255, 0.15); color: var(--accent-blue);">Настройки пульта</div>
+            
+            <label>URL скрипта Google Таблицы</label>
+            <input type="text" id="setting_url" placeholder="https://script.google.com/macros/s/.../exec">
+
+            <label>Порядок колонок (зажмите и перетащите)</label>
+            <div class="column-order-list" id="column_order_container"></div>
+
+            <button onclick="saveSettings()" class="btn-green">💾 Сохранить настройки</button>
+            <button onclick="toggleSettings()" class="btn-back">Закрыть настройки</button>
+        </div>
+
         <button onclick="resetAll()" class="btn-reset">🔄 СБРОСИТЬ / НОВАЯ ЗАЯВКА</button>
  
-        <!-- ВВОД ДАННЫХ КЛИЕНТА -->
         <div id="client_info_block" class="block">
             <div class="address-grid">
                 <div class="street-box">
@@ -307,7 +353,6 @@
             <input type="text" id="client_phone" placeholder="+7 (999) 000-00-00">
         </div>
  
-        <!-- ШАГ 1: Старт звонка -->
         <div id="step1" class="block">
             <div class="step-title">Результат контакта</div>
             <button onclick="goStep('step1', 'step2_yes')" class="btn-green">🚀 Согласен на подключение</button>
@@ -315,7 +360,6 @@
             <button onclick="goStep('step1', 'step2_no')" class="btn-red">❌ Отказ от услуг</button>
         </div>
  
-        <!-- ШАГ 2 (Да): Тарифы Уфанет -->
         <div id="step2_yes" class="block hidden">
             <div class="step-title">Выберите тариф</div>
             
@@ -342,7 +386,6 @@
             <button onclick="goStep('step2_yes', 'step1')" class="btn-back">← Назад</button>
         </div>
  
-        <!-- ШАГ 3 (Да): Оборудование -->
         <div id="step3_router" class="block hidden">
             <div class="step-title">Выбор оборудования</div>
             <button class="btn-grey" onclick="setRouter('ONT + Wi-Fi')">📡 ONT + Wi-Fi (100 ₽/мес)</button>
@@ -352,7 +395,6 @@
             <button onclick="goStep('step3_router', 'step2_yes')" class="btn-back">← Назад</button>
         </div>
  
-        <!-- ШАГ 2 (Подумает): Комментарий -->
         <div id="step2_think" class="block hidden">
             <div class="step-title">Комментарий к перезвону</div>
             <label>Детали / когда набрать</label>
@@ -361,7 +403,6 @@
             <button onclick="goStep('step2_think', 'step1')" class="btn-back">← Назад</button>
         </div>
  
-        <!-- ШАГ 2 (Нет): Причина отказа -->
         <div id="step2_no" class="block hidden">
             <div class="step-title">Причина отказа</div>
             <button onclick="setRefusal('Дорого')" class="btn-red">💸 Дорого</button>
@@ -370,7 +411,6 @@
             <button onclick="goStep('step2_no', 'step1')" class="btn-back">← Назад</button>
         </div>
  
-        <!-- ШАГ 2.1 (Нет): Комментарий к отзыву -->
         <div id="step2_no_review" class="block hidden">
             <div class="step-title">Детали отзыва</div>
             <label>Что не понравилось клиенту?</label>
@@ -379,19 +419,16 @@
             <button onclick="goStep('step2_no_review', 'step2_no')" class="btn-back">← Назад</button>
         </div>
  
-        <!-- ФИНАЛЬНЫЙ ЭКРАН -->
         <div id="final_block" class="block hidden">
             <div class="step-title" style="background: rgba(48, 209, 88, 0.15); color: var(--accent-green);">Готовый текст заявки</div>
             <textarea id="result_text" readonly></textarea>
             
-            <!-- Две кнопки: Копировать и Отправить в ряд -->
             <div class="action-buttons">
                 <button id="copy_btn" onclick="copyText()" class="btn-grey">📋 Скопировать</button>
                 <button id="send_btn" onclick="manualSend()" class="btn-green">🚀 Отправить</button>
             </div>
         </div>
  
-        <!-- ИСТОРИЯ ЗАЯВОК -->
         <div class="block" id="history_block">
             <div class="history-header" onclick="toggleHistory()">
                 <span id="history_title">🕒 ИСТОРИЯ ЗА СМЕНУ (0)</span>
@@ -408,10 +445,101 @@
     </div>
  
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxLc9KzfHmwrJnFdUHn-8xy7U7-iWF1w_u0EsSW1KqRToHbxRL6eM50iCshN6fjE8B0/exec";
+        const DEFAULT_URL = "https://script.google.com/macros/s/AKfycbxLc9KzfHmwrJnFdUHn-8xy7U7-iWF1w_u0EsSW1KqRToHbxRL6eM50iCshN6fjE8B0/exec";
+        
+        let defaultColumns = [
+            { id: 'timestamp', name: 'Дата / Время' },
+            { id: 'address', name: 'Адрес' },
+            { id: 'status', name: 'Результат (Статус)' },
+            { id: 'details', name: 'Детали / Комментарий' },
+            { id: 'phone', name: 'Номер телефона' }
+        ];
 
+        let currentUrl = localStorage.getItem('ufanet_script_url') || DEFAULT_URL;
+        let columnOrder = JSON.parse(localStorage.getItem('ufanet_column_order')) || defaultColumns;
+ 
         let resultData = { status: '', tariff: '', router: '', reason: '', thinkComment: '' };
         let historyArray = [];
+ 
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('setting_url').value = currentUrl;
+            renderColumnOrderUI();
+        });
+
+        function toggleSettings() {
+            let block = document.getElementById('settings_block');
+            block.classList.toggle('hidden');
+            if(!block.classList.contains('hidden')) {
+                block.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function renderColumnOrderUI() {
+            let container = document.getElementById('column_order_container');
+            container.innerHTML = '';
+            
+            columnOrder.forEach((col, index) => {
+                let div = document.createElement('div');
+                div.className = 'order-item';
+                div.draggable = true;
+                div.dataset.index = index;
+                div.innerHTML = `<span>${col.name}</span>`;
+
+                div.addEventListener('dragstart', handleDragStart);
+                div.addEventListener('dragover', handleDragOver);
+                div.addEventListener('drop', handleDrop);
+                div.addEventListener('dragend', handleDragEnd);
+
+                div.addEventListener('touchstart', handleTouchStart, { passive: false });
+                div.addEventListener('touchmove', handleTouchMove, { passive: false });
+                div.addEventListener('touchend', handleTouchEnd);
+
+                container.appendChild(div);
+            });
+        }
+
+        let draggedIndex = null;
+        function handleDragStart(e) { draggedIndex = parseInt(this.dataset.index); this.classList.add('dragging'); }
+        function handleDragOver(e) { e.preventDefault(); }
+        function handleDrop(e) {
+            e.preventDefault();
+            let targetIndex = parseInt(this.dataset.index);
+            if (draggedIndex !== null && draggedIndex !== targetIndex) {
+                let movedItem = columnOrder.splice(draggedIndex, 1)[0];
+                columnOrder.splice(targetIndex, 0, movedItem);
+                renderColumnOrderUI();
+            }
+        }
+        function handleDragEnd(e) { this.classList.remove('dragging'); draggedIndex = null; }
+
+        let touchSrcIndex = null;
+        function handleTouchStart(e) { touchSrcIndex = parseInt(this.dataset.index); this.classList.add('dragging'); }
+        function handleTouchMove(e) {
+            e.preventDefault();
+            let touch = e.touches[0];
+            let targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (targetElement && targetElement.classList.contains('order-item')) {
+                let targetIndex = parseInt(targetElement.dataset.index);
+                if (touchSrcIndex !== null && touchSrcIndex !== targetIndex) {
+                    let movedItem = columnOrder.splice(touchSrcIndex, 1)[0];
+                    columnOrder.splice(targetIndex, 0, movedItem);
+                    touchSrcIndex = targetIndex;
+                    renderColumnOrderUI();
+                }
+            }
+        }
+        function handleTouchEnd(e) { touchSrcIndex = null; renderColumnOrderUI(); }
+
+        function saveSettings() {
+            let urlInput = document.getElementById('setting_url').value.trim();
+            if (urlInput) {
+                currentUrl = urlInput;
+                localStorage.setItem('ufanet_script_url', currentUrl);
+            }
+            localStorage.setItem('ufanet_column_order', JSON.stringify(columnOrder));
+            alert('Настройки успешно сохранены!');
+            toggleSettings();
+        }
  
         function goStep(fromId, toId) {
             document.getElementById(fromId).classList.add('hidden');
@@ -477,18 +605,18 @@
             let sendBtn = document.getElementById('send_btn');
             sendBtn.innerText = '🚀 Отправить';
             sendBtn.style.background = '';
-
+ 
             addToHistory(finalOutput);
         }
-
-        // Ручная отправка: строго в колонки Дата, Адрес, Результат, Комментарий, Номер
+ 
+        // Отправка данных: формируем массив (values) строго в порядке колонок из настроек
         function manualSend() {
             let street = document.getElementById('client_street').value.trim();
             let apt = document.getElementById('client_apt').value.trim();
             let address = street || 'Не указан';
             if (apt) { address += `, кв. ${apt}`; }
             let phone = document.getElementById('client_phone').value.trim() || 'Не указан';
-
+ 
             let commentInfo = '-';
             if (resultData.status === 'Согласен') {
                 commentInfo = `Тариф: ${resultData.tariff} | Оборудование: ${resultData.router}`;
@@ -498,25 +626,32 @@
                 commentInfo = `Причина: ${resultData.reason}`;
             }
 
+            // Словарь со всеми возможными данными
+            let dataMap = {
+                timestamp: new Date().toLocaleString(),
+                address: address,
+                status: resultData.status,
+                details: commentInfo,
+                phone: phone
+            };
+
+            // Создаем массив значений строго по порядку, который выстроил пользователь
+            let valuesArray = columnOrder.map(col => dataMap[col.id]);
+ 
             let sendBtn = document.getElementById('send_btn');
             sendBtn.innerText = '⏳ Отправка...';
-
-            fetch(WEB_APP_URL, {
+ 
+            // Отправляем универсальный пакет
+            fetch(currentUrl, {
                 method: 'POST',
                 mode: 'no-cors',
                 cache: 'no-cache',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    timestamp: new Date().toLocaleString(),
-                    address: address,
-                    status: resultData.status,
-                    details: commentInfo,
-                    phone: phone
-                })
+                body: JSON.stringify({ values: valuesArray })
             }).catch(error => {
                 console.error('Ошибка отправки:', error);
             });
-
+ 
             setTimeout(() => {
                 sendBtn.innerText = '✅ ОТПРАВЛЕНО!';
                 sendBtn.style.background = '#28b84c';
@@ -591,15 +726,12 @@
             document.getElementById('step1').classList.remove('hidden');
             document.getElementById('client_info_block').classList.remove('hidden');
             
-            // Улица (street) НЕ очищается, чтобы сохранять адрес текущего дома
             document.getElementById('client_apt').value = '';
             document.getElementById('client_phone').value = '';
             document.getElementById('think_comment').value = '';
             document.getElementById('review_comment').value = '';
             
-            // Фокус переносится на квартиру для быстрого ввода следующего клиента
             document.getElementById('client_apt').focus();
-            
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
